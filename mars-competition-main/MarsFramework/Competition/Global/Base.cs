@@ -21,7 +21,7 @@ namespace Competition.Global
         public static string IsLogin = "true";
 
         public static string excelPath = @"C:\Competition task\Mars-Competition\mars-competition-main\MarsFramework\Competition\TestLibrary\TestData\TestData.xlsx";
-        public static string AutoITScriptPath = @"C:\Competition task\Mars-Competition\mars-competition-main\MarsFramework\Competition\TestLibrary\TestData\UploadFile.exe";
+        public static string AutoScriptPath = @"C:\Competition task\Mars-Competition\mars-competition-main\MarsFramework\Competition\TestLibrary\TestData\FileUploadScript.exe";
         public static string ScreenshotPath = @"C:\Competition task\Mars-Competition\mars-competition-main\MarsFramework\Competition\TestLibrary\Screenshots\";
         public static string ReportPath = @"C:\Competition task\Mars-Competition\mars-competition-main\MarsFramework\Competition\TestLibrary\TestReports\";
         #endregion

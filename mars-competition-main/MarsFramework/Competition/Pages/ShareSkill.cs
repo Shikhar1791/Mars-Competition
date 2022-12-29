@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Competition.Global.GlobalDefinitions;
+using static Microsoft.AspNetCore.Razor.Language.TagHelperMetadata;
 
 namespace Competition.Pages
 {
@@ -190,17 +191,18 @@ namespace Competition.Pages
             EndDateDropDown.SendKeys(excelData.endDate);
 
             //Enter Available days and hours
-            
-
-            
+            EnterAvailableDaysAndHours((excelData.availableDays) , (excelData.startTime) , (excelData.endTime) );
+                        
             //Select Skill trade "Credit" or "Skill-exchange"
             SelectSkillTrade(excelData.skillTrade, excelData.skillExchange, excelData.credit);
-
+            
             //Click Button upload work sample
+            UploadWorkSamples();
+
 
             //Click Active ir Hidden option
             ClickActiveOption(excelData.ActiveOption);
-
+         
             // Click on save
             Save.Click();
                         
@@ -238,7 +240,7 @@ namespace Competition.Pages
 
         }
 
-        internal void EnterAvailableDaysAndHours(string availableDaysText, string statrtTimerext, String endtimeText)
+        internal void EnterAvailableDaysAndHours(string availableDaysText, string statrtTimeText, String endtimeText)
         {
             //Enter available Days array
             string indexValue = "";
@@ -276,7 +278,7 @@ namespace Competition.Pages
                 if (indexValue.Equals(Days[i].GetAttribute("index")))
                 {
                     Days[i].Click();
-                    StartTime[i].SendKeys(statrtTimerext);
+                    StartTime[i].SendKeys(statrtTimeText);
                     EndTime[i].SendKeys(endtimeText);
                 }
             }
@@ -323,8 +325,8 @@ namespace Competition.Pages
         {
             btnWorkSamples.Click();
             wait(3);
-            //Run AutoIt-Script to execute file upload
-            using (Process exeProcess = Process.Start(Base.AutoITScriptPath))
+            //Run Auto-IT script to execute file uploading
+            using (Process exeProcess = Process.Start(Base.AutoScriptPath))
             {
                 exeProcess.WaitForExit();
             }
@@ -334,12 +336,164 @@ namespace Competition.Pages
             string elementValue = "true";
             if(ActiveOptionText.Equals("Hidden"))
                 elementValue = "false";
-            for(int i = 0; i<radioActive.Count(); i++)
+            for(int i = 0; i < radioActive.Count(); i++)
             { 
-                string actualElementValue = radioActive[i].GetAttribute("value");
+                string actualElementValue = radioActive[i].GetAttribute("Value");
                 if(elementValue.Equals(actualElementValue))
                     radioActive[i].Click();
             }
+        }
+        #endregion
+
+        //sub method for edit share listing
+        internal void ClearData()
+        {
+            //Clear tttle
+            Title.Click();
+            Title.SendKeys(Keys.Control + "A");
+            Title.SendKeys(Keys.Delete);
+
+
+            //Clear Description
+            Description.Click();
+            Description.SendKeys(Keys.Control + "A");
+            Description.SendKeys(Keys.Delete);
+
+            //clear tags
+            int countTags = displayedTags.Count();
+            for (int i = 0; i < countTags; i++)
+            {
+                if (countTags > 0)
+                    displayedTags[i].Click();
+            }
+            //clear days
+            for (int i = 0; i < Days.Count; i++)
+            {
+                bool dayState = Days[i].Selected;
+                if(dayState.Equals(true))
+                {
+                    //Unselect day
+                    Days[i].Click();
+
+                    // Clear StartTime
+                    StartTime[i].SendKeys(Keys.Delete);
+                    StartTime[i].SendKeys(Keys.Tab);
+                    StartTime[i].SendKeys(Keys.Delete);
+                    StartTime[i].SendKeys(Keys.Tab);
+                    StartTime[i].SendKeys(Keys.Delete);
+
+                    //Clear endtime
+                    EndTime[i].SendKeys(Keys.Delete);
+                    EndTime[i].SendKeys(Keys.Tab);
+                    EndTime[i].SendKeys(Keys.Delete);
+                    EndTime[i].SendKeys(Keys.Tab);
+                    EndTime[i].SendKeys(Keys.Delete);
+                }
+            }
+
+            wait(2);
+
+            // Clear skill Trade
+            for (int i = 0; i < radioSkillTrade.Count; i++)
+            {
+                string value = radioSkillTrade[i].GetAttribute("Value");
+                bool state = radioSkillTrade[i].Selected;
+                //Clear Skill Trade tags
+                if (value.Equals("true") & state.Equals(true))
+                {
+                    for (int j = 0; j < skillExchangeTags.Count; j++)
+                    {
+                        skillExchangeTags[j].Click();
+                    }
+                }
+                // Clear credit amount
+                else if (value.Equals("false") & state.Equals(true))
+                {
+                    CreditAmount.Click();
+                    CreditAmount.Clear();
+                }
+            }
+        }
+
+        //Negative test
+        internal void EnterShareSkill_InvalidData(int testData, string worksheet)
+        {
+            ShareSkill shareSkillObj = new ShareSkill();
+            Listing test = new Listing();
+            shareSkillObj.GetExcel(testData, worksheet, out test);
+
+            //Enter no data
+            if (test.isClickSaveFirst == "Yes")
+            {
+                Save.Click();
+            }
+            //Enter invalid data
+            else if (test.isClickSaveFirst == "No")
+            {
+                //enter invalid data depending on excel
+                EnterDataOnConditions(test.title, test.description, test.tags, test.startDate, test.endDate,
+                    test.skillTrade, test.skillExchange, test.credit, test.category, test.subcategory);
+                Save.Click();
+
+
+            }
+        }
+        #region Sub method for EnterShareskill_InvalidData
+
+        internal void EnterDataOnConditions(string titletext, string descriptionText, string tagsText,
+            string startDateText, string endDateText, string skillTradeText, string skillExchangeText,
+            string creditAmountText, string categoryText, string subcategoryText)
+        {
+            //Enter title
+            if(titletext != "Ignore")
+            {
+                Title.SendKeys(titletext);
+            }
+
+            //enter description
+            if (descriptionText != "Ignore")
+            {
+                Description.SendKeys(descriptionText);
+            }
+
+            // select category
+            var selectCategory = new SelectElement(CategoryDropDown);
+            if (categoryText != "Ignore")
+            {
+                selectCategory.SelectByText(categoryText);
+
+            }
+            if (subcategoryText != "Ignore")
+            {
+                // Select Subcategory
+                var selectSubCategory = new SelectElement(SubCategoryDropDown);
+                selectSubCategory.SelectByText(subcategoryText);
+            }
+            //enter Tags
+            if (tagsText != "Ignore")
+            {
+                Tags.Clear();
+                Tags.SendKeys(tagsText);
+                Tags.SendKeys(Keys.Return);
+            }
+
+            //Enter Start date
+            if (startDateText != "Ignore")
+            {
+                StartDateDropDown.SendKeys(startDateText);
+            }
+            //Enter end date
+            if (endDateText != "Ignore")
+            {
+                EndDateDropDown.SendKeys(endDateText);
+            }
+
+            //select skill trade options
+            if (skillTradeText != "Ignore")
+            {
+                SelectSkillTrade(skillTradeText, skillExchangeText, creditAmountText);
+            }
+
         }
         #endregion
 
@@ -362,7 +516,7 @@ namespace Competition.Pages
             public string endTime;
             public string credit;
             public string ActiveOption;
-            public string isClicSaveFirst;
+            public string isClickSaveFirst;
 
         }
 
@@ -386,7 +540,7 @@ namespace Competition.Pages
             excelData.endTime = ExcelLib.ReadData(rowNumber, "EndTime");
             excelData.credit = ExcelLib.ReadData(rowNumber, "CreditAmount");
             excelData.ActiveOption = ExcelLib.ReadData(rowNumber, "ActiveOption");
-            excelData.isClicSaveFirst = ExcelLib.ReadData(rowNumber, "isClickSaveFirst");
+            excelData.isClickSaveFirst = ExcelLib.ReadData(rowNumber, "isClickSaveFirst");
         }
 
         internal void GetWeb(out Listing webData)
@@ -408,7 +562,7 @@ namespace Competition.Pages
             webData.endTime = "dummy";
             webData.credit = "dummy";
             webData.ActiveOption = "dummy"; 
-            webData.isClicSaveFirst = "dummy";
+            webData.isClickSaveFirst = "dummy";
         }
 
         internal void GetPortalMessage(out Listing portal)
@@ -430,7 +584,7 @@ namespace Competition.Pages
             portal.skillTrade = "dummy";
             portal.credit = "dummy";
             portal.ActiveOption = "dummy";
-            portal.isClicSaveFirst = "dummy";
+            portal.isClickSaveFirst = "dummy";
         }
         
         internal string GetSkillTrade(string skillTardeOption)
