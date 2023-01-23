@@ -142,7 +142,7 @@ namespace Competition.Global
 
                 var screenShot = ((ITakesScreenshot)GlobalDefinitions.driver).GetScreenshot();
                 var fileName = new StringBuilder(Base.ScreenshotPath + ScreenShotFileName + DateTime.Now.ToString("_dd-MM-yyyy_HHmm") + ".jpeg");
-                screenShot.SaveAsFile(fileName.ToString(), ScreenshotImageFormat.Jpeg);
+                screenShot.SaveAsFile(fileName.ToString(), ScreenshotImageFormat.Png);
                 return fileName.ToString();
             }
 

@@ -71,7 +71,7 @@ namespace Competition.Pages
 
         //Skill Exchange
         private IWebElement SkillExchange => driver.FindElement(By.XPath("//div[@class='form-wrapper']//input[@type='text']"));
-        private IList<IWebElement> skillExchangeTags => driver.FindElements(By.XPath("//form[@class='ui form']/div[8]/div[4]/div/div/div/div/span/a"));
+        private IList<IWebElement> skillExchangeTags => driver.FindElements(By.XPath("//form[@class='ui form']/div[8]/div[4]/div/div/div/div"));
 
 
         //Credit textbox
@@ -192,17 +192,19 @@ namespace Competition.Pages
 
             //Enter Available days and hours
             EnterAvailableDaysAndHours((excelData.availableDays) , (excelData.startTime) , (excelData.endTime) );
+            wait(3);
                         
             //Select Skill trade "Credit" or "Skill-exchange"
             SelectSkillTrade(excelData.skillTrade, excelData.skillExchange, excelData.credit);
             
             //Click Button upload work sample
             UploadWorkSamples();
-
-
+            wait(3);
+            
             //Click Active ir Hidden option
             ClickActiveOption(excelData.ActiveOption);
-         
+           
+
             // Click on save
             Save.Click();
                         
@@ -240,7 +242,7 @@ namespace Competition.Pages
 
         }
 
-        internal void EnterAvailableDaysAndHours(string availableDaysText, string statrtTimeText, String endtimeText)
+        internal void EnterAvailableDaysAndHours(string availableDaysText, string statrtTimeText, String endTimeText)
         {
             //Enter available Days array
             string indexValue = "";
@@ -279,7 +281,7 @@ namespace Competition.Pages
                 {
                     Days[i].Click();
                     StartTime[i].SendKeys(statrtTimeText);
-                    EndTime[i].SendKeys(endtimeText);
+                    EndTime[i].SendKeys(endTimeText);
                 }
             }
         }
@@ -290,7 +292,7 @@ namespace Competition.Pages
             string elementValue = "true";
 
             if(skillTradeText.Equals("Credit"))
-            {
+            
                 elementValue = "false";
 
             for (int i = 0; i < radioSkillTrade.Count(); i++)
@@ -317,7 +319,7 @@ namespace Competition.Pages
                     }
                 }
 
-            }
+            
         }
 
         //Upload work samples

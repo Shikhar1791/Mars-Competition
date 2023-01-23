@@ -62,7 +62,7 @@ namespace Competition
         public void TC3b_ThenListingIsDeleted()
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            VerifyDelete(3, "ManageListing");
+            VerifyDelete(3, "ManageListings");
         }
 
         #region Assertions for EnterShareSkills
@@ -130,7 +130,7 @@ namespace Competition
             //Click on Manage Listing
             manageListingObj.GotoManageListings();
             //Assertion
-            Assert.AreEqual(title, manageListingObj.FindTitle("Title"), "Delete Failed");
+            Assert.AreNotEqual(title, manageListingObj.FindTitle("Title"), "Delete Failed");
         }
         #endregion
     }

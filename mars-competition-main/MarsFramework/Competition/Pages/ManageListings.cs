@@ -70,6 +70,7 @@ namespace Competition.Pages
             wait(2);
 
             shareSkillObj.ClearData();
+            wait(5);
             shareSkillObj.EnterShareSkill(rowNumber2 , worksheet);
             wait(3);
 
@@ -109,7 +110,7 @@ namespace Competition.Pages
             btnDelete.Click();
 
             //Click Yes
-            if(isDelete.Equals("Yes"))
+            if (isDelete.Equals("Yes"))
             {
                 clickActionsButton[1].Click();
 

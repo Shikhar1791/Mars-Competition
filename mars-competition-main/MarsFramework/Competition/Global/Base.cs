@@ -136,8 +136,8 @@ namespace Competition.Global
             }
 
             // Close the driver            
-            driver.Close();
-            driver.Quit();
+            //driver.Close();
+            //driver.Quit();
         }
 
         [OneTimeTearDown]
